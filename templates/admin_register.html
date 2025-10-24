@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, whitesmoke);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            width: 450px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2em;
+            color: #0052D4;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            background: #f7f7f7;
+            color: #333;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #0052D4;
+            outline: none;
+        }
+
+        button {
+            background-color: #0052D4;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0041a3;
+            transform: translateY(-2px);
+        }
+
+        p {
+            margin-top: 20px;
+            font-size: 1em;
+            text-align: center;
+        }
+
+        a {
+            color: #0052D4;
+            text-decoration: none;
+            transition: text-decoration 0.3s;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .flashes {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 10px;
+            color: #ffcc00;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1> Register Admin </h1>
+        <form method="POST" action="{{ url_for('admin_register') }}">
+            <div class="form-group">
+                <label for="name">Full Name:</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone:</label>
+                <input type="tel" name="phone" required>
+            </div>
+            <!-- Password Field -->
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <div style="position: relative;">
+                    <input type="password" id="password" name="password" class="form-control" required 
+                        style="padding-right: 10px;">
+                    <i class="fas fa-eye" id="togglePassword" 
+                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                </div>
+            </div>
+
+            <script>
+                document.getElementById('togglePassword').addEventListener('click', function () {
+                    const passwordField = document.getElementById('password');
+                    if (passwordField.type === 'password') {
+                        passwordField.type = 'text';
+                        this.classList.remove('fa-eye');
+                        this.classList.add('fa-eye-slash');
+                    } else {
+                        passwordField.type = 'password';
+                        this.classList.remove('fa-eye-slash');
+                        this.classList.add('fa-eye');
+                    }
+                });
+            </script>
+
+            <div class="form-group">
+                <label for="church_branch">Local Church:</label>
+                <input type="text" id="church_branch" name="church_branch" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <input type="text" name="address">
+            </div>
+            <div class="form-group">
+                <label for="country">Country:</label>
+                <select id="country" name="country" required onchange="updateStates()">
+                    <option value="">Select Country</option>
+                    <option value="Nigeria">Nigeria</option>
+                    <option value="United States">United States</option>
+                    <option value="Canada">Canada</option>
+                    <option value="United Kingdom">United Kingdom</option>
+                    <option value="Australia">Australia</option>
+                    <option value="India">India</option>
+                    <option value="South Africa">South Africa</option>
+                    <option value="Ghana">Ghana</option>
+                    <option value="Kenya">Kenya</option>
+                    <option value="Germany">Germany</option>
+                    <option value="France">France</option>
+                    <option value="Brazil">Brazil</option>
+                    <option value="Argentina">Argentina</option>
+                    <option value="Mexico">Mexico</option>
+                    <option value="Italy">Italy</option>
+                    <option value="Spain">Spain</option>
+                    <option value="Netherlands">Netherlands</option>
+                    <option value="Russia">Russia</option>
+                    <option value="Japan">Japan</option>
+                    <option value="China">China</option>
+                    <option value="United Arab Emirates">United Arab Emirates</option>
+                    <option value="Country Not listed">Country Not listed</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="manual_country">If your country is not listed, please specify:</label>
+                <input type="text" id="manual_country" name="manual_country" placeholder="Enter country name">
+            
+                <label for="state_select">State:</label>
+                <select id="state_select" name="state">
+                    <option value="">Select State</option>
+                    <!-- Add state options here -->
+                </select>
+            
+                <label for="manual_state">Or type your state:</label>
+                <input type="text" id="manual_state" name="manual_state" placeholder="Type your state if not listed">
+            </div>
+            
+            <button type="submit">Register</button>
+            <p>Already have an account? <a href="{{ url_for('admin_login') }}">Login here</a>.</p>
+        </form>
+        {% with messages = get_flashed_messages() %} 
+            {% if messages %} 
+                <ul class="flashes"> 
+                {% for message in messages %} 
+                    <li>{{ message }}</li> 
+                {% endfor %} 
+                </ul> 
+            {% endif %} 
+        {% endwith %}
+    </div>
+
+    <script>
+        const countryStateData = {
+            "Nigeria": ["Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Kogi", "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara", "Abuja"],
+            "United States": ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"],
+            "Canada": ["Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador", "Nova Scotia", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan"],
+            "United Kingdom": ["England", "Scotland", "Wales", "Northern Ireland"],
+            "Australia": ["New South Wales", "Victoria", "Queensland", "Western Australia", "South Australia", "Tasmania", "Australian Capital Territory", "Northern Territory"],
+            "India": ["Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"],
+            "South Africa": [
+                "Eastern Cape", "Free State", "Gauteng", 
+                "KwaZulu-Natal", "Limpopo", "Mpumalanga", 
+                "Northern Cape", "North West", "Western Cape"
+            ],
+            "Ghana": [
+                "Greater Accra", "Ashanti", "Western", 
+                "Eastern", "Central", "Northern", 
+                "Western North", "Volta", "Oti", 
+                "Upper East", "Upper West"
+            ],
+            "Kenya": [
+                "Nairobi", "Mombasa", "Kisumu", "Nakuru", 
+                "Eldoret", "Nyeri", "Meru", "Machakos", 
+                "Kiambu", "Uasin Gishu", "Kajiado", "Bomet", 
+                "Narok", "Kericho", "Laikipia", "Nyandarua"
+            ],
+            "Germany": [
+                "Baden-Württemberg", "Bavaria", "Berlin", 
+                "Brandenburg", "Bremen", "Hamburg", 
+                "Hesse", "Lower Saxony", "Mecklenburg-Vorpommern", 
+                "North Rhine-Westphalia", "Rhineland-Palatinate", "Saarland", 
+                "Saxony", "Saxony-Anhalt", "Schleswig-Holstein", 
+                "Thuringia"
+            ],
+            "France": [
+                "Île-de-France", "Auvergne-Rhône-Alpes", "Bourgogne-Franche-Comté", 
+                "Brittany", "Centre-Val de Loire", "Grand Est", 
+                "Hauts-de-France", "Normandy", "Nouvelle-Aquitaine", 
+                "Occitanie", "Pays de la Loire", "Provence-Alpes-Côte d'Azur"
+            ],
+            "Brazil": [
+                "Acre", "Alagoas", "Amapá", "Bahia", 
+                "Ceará", "Distrito Federal", "Espírito Santo", 
+                "Goiás", "Maranhão", "Mato Grosso", "Mato Grosso do Sul", 
+                "Minas Gerais", "Pará", "Paraíba", "Paraná", 
+                "Pernambuco", "Piauí", "Rio de Janeiro", "Rio Grande do Norte", 
+                "Rio Grande do Sul", "Rondônia", "Roraima", "Santa Catarina", 
+                "São Paulo", "Sergipe", "Tocantins"
+            ],
+            "Argentina": [
+                "Buenos Aires", "Catamarca", "Chaco", 
+                "Chubut", "Córdoba", "Corrientes", 
+                "Entre Ríos", "Formosa", "Jujuy", 
+                "La Pampa", "La Rioja", "Mendoza", 
+                "Misiones", "Neuquén", "Río Negro", 
+                "Salta", "San Juan", "San Luis", "Santa Cruz", 
+                "Santa Fe", "Santiago del Estero", "Tierra del Fuego", 
+                "Tucumán"
+            ],
+            "Mexico": [
+                "Aguascalientes", "Baja California", "Baja California Sur", 
+                "Campeche", "Chiapas", "Chihuahua", 
+                "Coahuila", "Colima", "Durango", 
+                "Guanajuato", "Guerrero", "Hidalgo", 
+                "Jalisco", "Mexico City", "Mexico State", 
+                "Michoacán", "Morelos", "Nayarit", 
+                "Nuevo León", "Oaxaca", "Puebla", 
+                "Querétaro", "Quintana Roo", "San Luis Potosí", 
+                "Sinaloa", "Sonora", "Tabasco", 
+                "Tamaulipas", "Tlaxcala", "Veracruz", 
+                "Yucatán", "Zacatecas"
+            ],
+            "Italy": [
+                "Abruzzo", "Basilicata", "Calabria", 
+                "Campania", "Emilia-Romagna", "Friuli Venezia Giulia", 
+                "Lazio", "Liguria", "Lombardia", 
+                "Marche", "Molise", "Piemonte", 
+                "Puglia", "Sardegna", "Sicilia", 
+                "Toscana", "Trentino-Alto Adige", "Umbria", 
+                "Valle d'Aosta", "Veneto"
+            ],
+            "Spain": [
+                "Andalusia", "Aragon", "Asturias", 
+                "Balearic Islands", "Basque Country", "Canary Islands", 
+                "Cantabria", "Castile and León", "Castile-La Mancha", 
+                "Catalonia", "Extremadura", "Galicia", 
+                "La Rioja", "Madrid", "Murcia", 
+                "Navarre", "Valencian Community"
+            ],
+            "Netherlands": [
+                "Drenthe", "Flevoland", "Friesland", 
+                "Gelderland", "Groningen", "Limburg", 
+                "North Brabant", "North Holland", "Overijssel", 
+                "South Holland", "Utrecht", "Zeeland"
+            ],
+            "Russia": [
+                "Adygea", "Altai Krai", "Altai Republic", 
+                "Amur Oblast", "Arkhangelsk Oblast", "Astrakhan Oblast", 
+                "Bashkortostan", "Buryatia", "Chechen Republic", 
+                "Chelyabinsk Oblast", "Chukotka Autonomous Okrug", 
+                "Chuvash Republic", "Dagestan", "Evensk Autonomous Okrug", 
+                "Irkutsk Oblast", "Ivanovo Oblast", "Kabardino-Balkar Republic", 
+                "Kaliningrad Oblast", "Kalmykia", "Karelia", 
+                "Kemerovo Oblast", "Khabarovsk Krai", "Khakassia", 
+                "Kirov Oblast", "Komi Republic", "Kostroma Oblast", 
+                "Krasnodar Krai", "Krasnoyarsk Krai", "Leningrad Oblast", 
+                "Lipetsk Oblast", "Magadan Oblast", "Mari El Republic", 
+                "Moscow", "Moscow Oblast", "Murmansk Oblast", 
+                "Nizhny Novgorod Oblast", "North Ossetia-Alania", "Novgorod Oblast", 
+                "Novosibirsk Oblast", "Omsk Oblast", "Orel Oblast", 
+                "Orenburg Oblast", "Penza Oblast", "Perm Krai", 
+                "Primorsky Krai", "Rostov Oblast", "Ryazan Oblast", 
+                "Sakha Republic", "Sakhalin Oblast", "Samara Oblast", 
+                "Saratov Oblast", "Smolensk Oblast", "St. Petersburg", 
+                "Tambov Oblast", "Tatarstan", "Tomsk Oblast", 
+                "Tula Oblast", "Tyumen Oblast", "Udmurt Republic", 
+                "Vladimir Oblast", "Volgograd Oblast", "Vologda Oblast", 
+                "Voronezh Oblast", "Zabaykalsky Krai", "Republic of Crimea"
+            ],
+            "Country Not listed": [
+                "State N/A"
+            ]
+            
+            // Add more countries and their states here
+        };
+
+        function updateStates() {
+            const countrySelect = document.getElementById('country');
+            const stateSelect = document.getElementById('state_select'); // Change this line
+            const selectedCountry = countrySelect.value;
+
+
+            // Clear current states
+            stateSelect.innerHTML = '<option value="">Select State</option>';
+
+            if (selectedCountry && countryStateData[selectedCountry]) {
+                const states = countryStateData[selectedCountry];
+                states.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state;
+                    option.textContent = state;
+                    stateSelect.appendChild(option);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Options</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #343c4e;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        h1 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        h3, h4 {
+            font-size: 1em;
+            margin-bottom: 5px;
+        }
+        p {
+            font-size: 1em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .account-details {
+            width: 100%;
+            max-width: 600px;
+            background-color: #061350;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 60px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .account-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 100px;
+        }
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+        .option-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #061350;
+            border: none;
+            border-radius: 50%;
+            padding: 5px;
+            color: white;
+            font-size: 0.9em;
+            cursor: pointer;
+            text-align: center;
+            width: 100px;
+            height: 100px;
+            text-decoration: none;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        .option-button:hover {
+            background-color: #2C52DF;
+            transform: scale(1.05);
+        }
+        .option-text {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .emoji {
+            font-size: 1.2em;
+            margin-bottom: 3px;
+        }
+        .paypal-logo img {
+            width: 50px;
+            height: auto;
+        }
+        .back-button {
+            background-color: green;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #1A2F8A;
+        }
+    </style>
+</head>
+<body>
+    <!-- Account Details Section -->
+    <div class="account-details">
+        <h3>Bank Account Details</h3>
+        <div class="account-section">
+            <div>
+                <h4>International Audience</h4>
+                <p><strong>WELLS FARGO BANK (USD)</strong></p>
+                <p>Dominion City Global</p>
+                <p>A/C: 3240700074</p>
+                <p>Intl routing no: 121000248</p>
+            </div>
+            <div>
+                <h4>Local & International Audience</h4>
+                <p><strong>Guaranty Trust Bank PLC (USD)</strong></p>
+                <p>Dominion City</p>
+                <p>A/C: 028-326-5588</p>
+                <p>Swift: GTBINGLA</p>
+            </div>
+        </div>
+        <h4>For Enquiries, call:</h4>
+        <p>+234-9036370546 | +234-8103526864</p>
+    </div>
+
+    <!-- Payment Options Section -->
+    <h1>Alternative Payment Options</h1>
+    <p>Explore secure alternatives to complete your donation:</p>    
+
+    <div class="options-container">
+        <a href="https://www.paypal.com/paypalme/dominioncityglobal" class="option-button" target="_blank">
+            <div class="paypal-logo">
+                <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" alt="PayPal Logo">
+            </div>
+            <div class="option-text">PayPal</div>
+        </a>
+        <a href="{{ url_for('paystack') }}" class="option-button" target="_blank">
+            <div class="emoji">💳</div>
+            <div class="option-text">Credit/Debit Card (Paystack)</div>
+        </a>
+        <a href="mailto:give@dominioncityglobal.org" class="option-button" target="_blank">
+            <div class="emoji">💰</div>
+            <div class="option-text">Zelle</div>
+        </a>
+    </div>
+
+    <a href="{{ url_for('donate') }}" class="back-button">Go Back to Donation Page</a>
+</body>
+</html>

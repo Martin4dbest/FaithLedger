@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner Pledges</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: whitesmoke;
+            margin: 0;
+            padding: 0;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        table th {
+            background-color: #007bff;
+            color: white;
+        }
+        .status-settled {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .status-pending {
+            color: #ee0018;
+            font-weight: bold;
+        }
+        .export-button {
+            background-color: green;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        .export-button:hover {
+            background-color: #0056b3;
+        }
+        .back-link {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .back-link:hover {
+            color: #0056b3;
+            transform: scale(1.1);
+        }
+        .table-responsive {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-4 p-4">
+        <!-- Back Link -->
+        <div class="text-start mb-3">
+            <a href="{{ url_for('admin_dashboard') }}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+        
+
+        <h2>Partner Pledges / Onboard Partners</h2>
+        
+        <!-- Search Form -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-6">
+                <form class="input-group mb-3" method="POST" action="{{ url_for('view_partners_pledges') }}">
+                    <input type="text" id="search_query" name="search_query" 
+                           class="form-control" placeholder="Search by Name, State, Country, or Local Church" 
+                           value="{{ search_query }}">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Export Button -->
+        <div class="text-center mb-4">
+            <form action="{{ url_for('sync_with_google_sheets') }}" method="POST">
+                <button type="submit" class="btn export-button">
+                    Click to Onboard Partners From Google Sheets
+                </button>
+            </form>
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover text-center">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Pledged Amount</th>
+                        <th>Currency</th>
+                        <th>Country</th>
+                        <th>State</th>
+                        <th>Local Church</th>
+                        <th>Partner Since</th>
+                        <th>Medal</th>
+                        <th>Pledge Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.pledged_amount|commas }}</td>
+                            <td>{{ user.pledge_currency }}</td>
+                            <td>{{ user.country }}</td>
+                            <td>{{ user.state }}</td>
+                            <td>{{ user.church_branch }}</td>
+                            <td>{{ user.partner_since }}</td>
+                            <td>{{ user.medal }}</td>
+                            <td>
+                                {% if user.pledged_amount == 0 %}
+                                    <span class="status-settled">No Pledge ✅</span>
+                                {% else %}
+                                    <span class="status-pending">Pending ⏳</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

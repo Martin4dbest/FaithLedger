@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FaithLedger — Faith. Tech. Impact.</title>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg-1:#0f1d2d;       /* dark navy */
+      --bg-2:#192a44;       /* deep blue */
+      --neon:#66f0ff;       /* neon cyan accent */
+      --accent:#4fc3f7;     /* soft blue accent */
+      --muted:#a3b1c2;      /* softer gray */
+      --card:#11263d;       /* card background */
+      --glass: rgba(255,255,255,0.03);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(102,240,255,0.04), transparent 8%),
+                  linear-gradient(180deg,var(--bg-1),var(--bg-2));
+      color:#e6f7ff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+      line-height:1.45;
+    }
+
+    /* container */
+    .wrap{max-width:1200px;margin:0 auto;padding:0 20px;}
+
+    /* NAVBAR */
+    header{
+      position:fixed;top:0;left:0;right:0;z-index:60;
+      backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(15,29,45,0.55), rgba(15,29,45,0.2));
+      border-bottom:1px solid rgba(255,255,255,0.03);
+    }
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand img{height:40px;width:40px;border-radius:8px;object-fit:cover;box-shadow:0 6px 18px rgba(0,0,0,0.6)}
+    .brand h1{font-size:18px;margin:0;color:var(--neon);letter-spacing:0.6px}
+    nav{display:flex;gap:22px;align-items:center}
+    nav a{color:var(--muted);text-decoration:none;font-weight:600;font-size:14px;transition:color .18s}
+    nav a:hover{color:var(--neon)}
+    .cta{
+      background:linear-gradient(90deg,var(--neon),var(--accent));
+      color:#0f1d2d;padding:10px 16px;border-radius:10px;font-weight:700;text-decoration:none;
+      box-shadow:0 8px 30px rgba(102,240,255,0.12);transition:transform .18s; font-size:14px;
+    }
+    .cta:hover{transform:translateY(-3px)}
+
+    /* mobile menu */
+    .hamburger{display:none;background:transparent;border:0;color:var(--neon);font-size:20px}
+    @media(max-width:880px){
+      nav{display:none}
+      .hamburger{display:block}
+    }
+
+    /* HERO */
+    .hero{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:120px 20px 80px;
+      position:relative;
+    }
+    .hero-grid{display:grid;grid-template-columns:1fr 460px;gap:48px;align-items:center;width:100%;max-width:1200px;z-index:2}
+    .hero-left{max-width:720px}
+    .eyebrow{display:inline-block;padding:6px 10px;background:linear-gradient(90deg, rgba(102,240,255,0.08), rgba(79,195,247,0.04));color:var(--neon);border-radius:8px;font-weight:700;font-size:12px;margin-bottom:16px}
+    .hero-title{font-size:42px;line-height:1.02;margin:0 0 16px;font-weight:800;color:#eafcff;letter-spacing:-0.6px}
+    .hero-title small{display:block;font-size:20px;font-weight:600;color:rgba(255,255,255,0.85);margin-top:8px}
+    .hero-desc{color:var(--muted);font-size:16px;margin-bottom:22px;max-width:58ch}
+    .hero-actions{display:flex;gap:14px;flex-wrap:wrap}
+    .ghost{
+      padding:10px 16px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);
+      color:var(--muted);text-decoration:none;font-weight:600;font-size:14px;background:transparent;
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:14px;padding:18px;box-shadow:0 10px 30px rgba(2,8,14,0.6);
+      border:1px solid rgba(102,240,255,0.04);
+    }
+
+    /* right card - static content */
+    .panel{display:flex;flex-direction:column;gap:12px;align-items:stretch}
+    .stat-left{display:flex;gap:12px;align-items:center}
+    .avatar{height:46px;width:46px;border-radius:10px;object-fit:cover}
+    .stat-sub{color:var(--muted);font-size:12px}
+    .big-num{font-size:20px;font-weight:800;color:white}
+
+    /* features */
+    .features{padding:70px 20px 90px}
+    .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;max-width:1200px;margin:0 auto}
+    .feat{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:28px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+    .feat h4{margin:0 0 8px;color:var(--neon);font-size:16px}
+    .feat p{margin:0;color:var(--muted);font-size:14px}
+
+    @media(max-width:980px){
+      .hero-grid{grid-template-columns:1fr;gap:24px}
+      .feat-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:640px){
+      .feat-grid{grid-template-columns:1fr}
+      .hero-title{font-size:28px}
+      .hero-desc{font-size:15px}
+      .hero{padding:100px 14px 60px}
+      .brand h1{font-size:16px}
+      .brand img{height:36px;width:36px}
+      .cta{padding:8px 12px;font-size:13px}
+    }
+
+    /* about */
+    .about{padding:70px 20px;background:linear-gradient(180deg, rgba(0,0,0,0.03), transparent)}
+    .about-inner{display:flex;gap:28px;align-items:center;max-width:1200px;margin:0 auto}
+    .about-text{flex:1}
+    .about-visual{width:420px;border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(3,10,18,0.6)}
+    .about-visual img{width:100%;display:block;object-fit:cover;height:100%}
+
+    /* CTA strip */
+    .strip{margin:40px auto 80px;max-width:1100px;padding:22px;background:linear-gradient(90deg, rgba(102,240,255,0.06), rgba(79,195,247,0.03));border-radius:12px;border:1px solid rgba(102,240,255,0.06);display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .strip h3{margin:0;font-size:18px}
+    .strip p{margin:0;color:var(--muted);font-size:14px}
+
+    /* footer */
+    footer{padding:40px 20px;text-align:center;color:var(--muted);border-top:1px solid rgba(255,255,255,0.02)}
+    footer small{display:block;margin-top:6px;color:#4f6a77}
+
+    /* subtle floating glow */
+    .glow {
+      position:absolute;right:-120px;top:10vh;width:520px;height:520px;border-radius:50%;
+      background:radial-gradient(circle, rgba(102,240,255,0.12), transparent 30%);
+      filter:blur(40px);z-index:1;pointer-events:none;
+    }
+
+    /* simple fade in animations */
+    .fade{opacity:0;transform:translateY(10px);animation:fadeIn .9s ease forwards}
+    .delay-1{animation-delay:.12s}
+    .delay-2{animation-delay:.24s}
+    .delay-3{animation-delay:.36s}
+    @keyframes fadeIn{to{opacity:1;transform:none}}
+  </style>
+</head>
+<body>
+
+  <!-- header -->
+  <header>
+    <div class="wrap nav-inner">
+      <div class="brand">
+        <img src="static/images/faith.JPG" alt="FaithLedger logo">
+        <h1>FaithLedger</h1>
+      </div>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+        <a class="cta" href="{{ url_for('register') }}">Get Started</a>
+      </nav>
+      <button class="hamburger" id="hamb" aria-label="menu">☰</button>
+    </div>
+  </header>
+
+  <!-- hero -->
+  <main class="hero">
+    <div class="glow" aria-hidden="true"></div>
+    <div class="hero-grid wrap">
+      <div class="hero-left">
+        <span class="eyebrow fade delay-1">FaithLedger · Secure • Transparent</span>
+        <h2 class="hero-title fade delay-2" style="font-size: 1.5rem; line-height: 1.3;">
+        Digital stewardship with clarity
+        <small style="font-size: 0.85rem;">Manage donations • Partner missions • Measure impact</small>
+        </h2>
+
+        <p class="hero-desc fade delay-3">FaithLedger gives ministries and faith communities a modern ledger to track giving, coordinate partners, and measure outcomes — secure, simple, and trusted.</p>
+
+        <div class="hero-actions fade delay-3" style="margin-top:16px">
+          <a class="cta" href="{{ url_for('register') }}">Create Account</a>
+          <a class="ghost" href="{{ url_for('login') }}">Sign in</a>
+        </div>
+      </div>
+
+      <!-- right panel - STATIC INFO -->
+      <aside class="card panel fade delay-2" aria-hidden="false">
+        <div class="stat-left">
+          <img class="avatar" src="static/images/faith.JPG" alt="logo small">
+          <div>
+            <div style="font-weight:700">FaithLedger</div>
+            <div class="stat-sub">Trusted ledger for ministries</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;font-size:13px;color:var(--muted)">
+          Features:
+          <ul style="margin:6px 0 0;padding-left:18px">
+            <li>Secure payments</li>
+            <li>Automated receipts</li>
+            <li>Donor privacy</li>
+            <li>Campaign tracking</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- features -->
+  <section id="features" class="features">
+    <div class="wrap feat-grid fade delay-1">
+      <div class="feat">
+        <h4>Transparent Ledger</h4>
+        <p>Immutable records, clear reporting, and donor receipts — build trust with verifiable giving histories.</p>
+      </div>
+      <div class="feat">
+        <h4>Partner Workflows</h4>
+        <p>Coordinate missions and partner payouts with approval flows and role-based permissions.</p>
+      </div>
+      <div class="feat">
+        <h4>Impact Dashboards</h4>
+        <p>Visualize outcomes, measure campaign reach, and generate insights for better ministry decisions.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- about -->
+  <section id="about" class="about">
+    <div class="about-inner wrap fade delay-2">
+      <div class="about-text">
+        <h3 style="margin:0 0 10px;color:var(--neon)">Why FaithLedger</h3>
+        <p style="color:var(--muted)">FaithLedger was built for ministries that want modern stewardship without complexity. We combine secure record-keeping, donor privacy, and analytics so teams can focus on mission, not paperwork.</p>
+        <div style="margin-top:18px;display:flex;gap:10px">
+          <a class="cta" href="{{ url_for('register') }}">Start Free</a>
+          <a class="ghost" href="{{ url_for('login') }}">Demo account</a>
+        </div>
+      </div>
+
+      <div class="about-visual">
+        <img src="https://images.unsplash.com/photo-1559526324-593bc073d938?auto=format&fit=crop&w=1200&q=80" alt="dashboard">
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA strip -->
+  <div class="wrap strip fade delay-3">
+    <div>
+      <h3 style="margin:0">Ready to modernize stewardship?</h3>
+      <p style="margin:6px 0 0">Create your FaithLedger account and bring clarity to your mission finance.</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a class="cta" href="{{ url_for('register') }}">Get Started</a>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <!-- footer -->
+<footer>
+  <div class="wrap">
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-direction:column">
+      <small>© 2025 FaithLedger</small>
+      <small>Developer: 09045531092, devMartinez</small>
+    </div>
+    <small>Built for ministries • Secure payments • Privacy-first</small>
+  </div>
+</footer>
+
+
+  <script>
+    // mobile menu toggle
+    const hamb = document.getElementById('hamb');
+    const nav = document.querySelector('nav');
+    hamb.addEventListener('click', () => {
+      if (nav.style.display === 'flex') {
+        nav.style.display = 'none';
+      } else {
+        nav.style.display = 'flex';
+        nav.style.flexDirection = 'column';
+        nav.style.position = 'fixed';
+        nav.style.right = '20px';
+        nav.style.top = '68px';
+        nav.style.background = 'rgba(15,29,45,0.95)';
+        nav.style.padding = '12px';
+        nav.style.borderRadius = '12px';
+        nav.style.boxShadow = '0 12px 40px rgba(0,0,0,0.6)';
+      }
+    });
+
+    document.querySelectorAll('nav a').forEach(a=>{
+      a.addEventListener('click', ()=> {
+        if (window.innerWidth < 880) nav.style.display = 'none';
+      })
+    });
+  </script>
+</body>
+</html>

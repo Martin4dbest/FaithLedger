@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner Contact Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative; /* Allow the back link to be inside */
+        }
+
+        .search-form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .search-form input[type="text"] {
+            padding: 8px;
+            font-size: 14px;
+            width: 100%; /* Full width on smaller screens */
+            max-width: 600px; /* Limit width on larger screens */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .search-form button {
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 12px;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .back-link {
+            font-size: 40px;
+            color: #007bff;
+            text-decoration: none;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #0056b3;
+            transform: scale(1.2);
+        }
+
+        /* Responsive table (horizontal scroll on small screens) */
+        .table-responsive {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Back Link -->
+        <a href="{{ url_for('admin_dashboard') }}" class="back-link">
+            🔙
+        </a>
+
+        <h2>Partners Contact Details</h2>
+
+        <!-- Search Form -->
+        <div class="search-form">
+            <form method="POST" action="{{ url_for('view_partners_details') }}">
+                <input type="text" name="search_query" placeholder="Enter Name, Country, State, or Local Church" value="{{ search_query }}">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        <!-- Responsive Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Partner Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Country</th>
+                        <th>State</th>
+                        <th>Local Church</th>
+                        <th>Partner Since</th>
+                        <th>Address</th>
+                        <th>Birthday</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.phone }}</td>
+                            <td>{{ user.country }}</td>
+                            <td>{{ user.state }}</td>
+                            <td>{{ user.church_branch }}</td>
+                            <td>{{ user.partner_since }}</td>
+                            <td>{{ user.address }}</td>
+                            <td>{{ user.birthday }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

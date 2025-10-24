@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pay with Paystack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+
+    <!-- Back Button Section -->
+    <div class="absolute top-4 left-4 flex items-center gap-2">
+        <a href="{{ url_for('donate') }}" class="text-yellow-500 text-3xl hover:text-green-700">
+            <i class="fas fa-sign-out-alt"></i>
+        </a>
+        <a href="{{ url_for('donate') }}" class="text-green-400 font-medium hover:text-green-600">Back</a>
+    </div>
+
+    <!-- Form Container -->
+    <div class="bg-gray-900 text-white rounded-lg shadow-lg p-6 w-full max-w-lg mx-4">
+        <h1 class="text-3xl font-bold text-yellow-400 mb-2">Donate Securely</h1>
+
+        <!-- Form -->
+        <form id="paymentForm">
+            <div class="mb-4">
+                <label for="fullName" class="block font-semibold mb-1">Full Name</label>
+                <input type="text" id="fullName" placeholder="Enter your full name" required
+                       class="w-full px-4 py-2 rounded border focus:ring-2 focus:ring-yellow-400 focus:outline-none text-gray-900">
+            </div>
+            <div class="mb-4">
+                <label for="email" class="block font-semibold mb-1">Email</label>
+                <input type="email" id="email" placeholder="Enter your email" required
+                       class="w-full px-4 py-2 rounded border focus:ring-2 focus:ring-yellow-400 focus:outline-none text-gray-900">
+                <p class="text-yellow-400 text-sm mt-1">A receipt will be sent to this email.</p>
+            </div>
+            <div class="mb-4">
+                <label for="contact" class="block font-semibold mb-1">Contact (Mobile)</label>
+                <input type="tel" id="contact" placeholder="Enter your phone number" required
+                       class="w-full px-4 py-2 rounded border focus:ring-2 focus:ring-yellow-400 focus:outline-none text-gray-900">
+                <p class="text-yellow-400 text-sm mt-1">Include your country code (e.g., +234).</p>
+            </div>
+            
+            <div class="mb-4">
+                <label for="amount" class="block font-semibold mb-1">Amount</label>
+                <input type="text" id="amount" placeholder="Enter the amount in NGN" required
+                       class="w-full px-4 py-2 rounded border focus:ring-2 focus:ring-yellow-400 focus:outline-none text-gray-900"
+                       oninput="formatAmount(this)">
+            </div>
+            
+            <div class="mb-6">
+                <label for="remark" class="block font-semibold mb-1">Remark</label>
+                <input type="text" id="remark" placeholder="Add a note (optional)"
+                       class="w-full px-4 py-2 rounded border focus:ring-2 focus:ring-yellow-400 focus:outline-none text-gray-900">
+            </div>
+            <button type="button" id="payWithPaystack" 
+                    class="w-full py-3 bg-yellow-500 text-gray-900 font-bold rounded hover:bg-yellow-600 transition duration-200">
+                💳 PAY NOW
+            </button>
+        </form>
+    </div>
+
+    <!-- Paystack Integration -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <script>
+        // Format amount with comma separators as user types
+        function formatAmount(input) {
+            let value = input.value.replace(/,/g, ''); // Remove existing commas
+            if (!isNaN(value) && value !== "") {
+                input.value = parseFloat(value).toLocaleString('en'); // Format with commas
+            } else {
+                input.value = ""; // Clear invalid input
+            }
+        }
+
+        // Paystack Payment Integration
+        document.getElementById("payWithPaystack").addEventListener("click", function(e) {
+            e.preventDefault();
+
+            const fullName = document.getElementById("fullName").value;
+            const email = document.getElementById("email").value;
+            const amountField = document.getElementById("amount").value.replace(/,/g, ''); // Remove commas
+
+            // Validate input fields
+            if (!fullName || !email || !amountField || isNaN(amountField) || parseFloat(amountField) <= 0) {
+                alert('Please fill all fields correctly and ensure amount is a positive number.');
+                return;
+            }
+
+            const amountInKobo = parseFloat(amountField) * 100; // Convert amount to kobo
+
+            const handler = PaystackPop.setup({
+                key: "pk_live_43f0e995f8e312c4dbf4d79b2edbe34802f4defc", // Replace with your Paystack public key
+                email: email,
+                amount: amountInKobo, // Pass amount in kobo
+                currency: "NGN",
+                callback: function(response) {
+                    fetch('/verify-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ reference: response.reference })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            alert('Payment verified successfully!');
+                        } else {
+                            alert('Payment verification failed: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        alert('Error verifying payment: ' + error.message);
+                    });
+                },
+                onClose: function() {
+                    alert('Payment window closed.');
+                }
+            });
+            handler.openIframe();
+        });
+    </script>
+</body>
+</html>

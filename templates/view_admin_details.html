@@ -1,0 +1,170 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Contact Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .search-form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .search-form input[type="text"] {
+            padding: 8px;
+            font-size: 14px;
+            width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .search-form button {
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th, td {
+            padding: 12px;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .back-link {
+            font-size: 40px;
+            color: #007bff;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .back-link:hover {
+            color: #0056b3;
+            transform: scale(1.2);
+        }
+
+        /* Make it responsive */
+        @media (max-width: 768px) {
+            .search-form input[type="text"], .search-form button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .search-form button {
+                margin-top: 10px;
+            }
+            .container {
+                width: 95%;
+            }
+            table th, table td {
+                padding: 8px;
+            }
+            .back-link {
+                font-size: 30px;
+            }
+        }
+
+        /* Enable scrolling for the table on smaller screens */
+        @media (max-width: 576px) {
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Admins Contact Details</h2>
+
+        <!-- Search Form -->
+        <div class="search-form">
+            <form method="POST" action="{{ url_for('view_admin_details') }}">
+                <input type="text" name="search_country" placeholder="Enter Country" value="{{ search_country }}">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Admin Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Country</th>
+                        <th>State</th>
+                        <th>Local Church</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for admin in admins %}
+                        <tr>
+                            <td>{{ admin.name }}</td>
+                            <td>{{ admin.email }}</td>
+                            <td>{{ admin.phone }}</td>
+                            <td>{{ admin.country }}</td>
+                            <td>{{ admin.state }}</td>
+                            <td>{{ admin.church_branch }}</td>
+                            <td>{{ admin.address }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <a href="{{ url_for('admin_dashboard') }}" class="back-link">
+            🔙
+        </a>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

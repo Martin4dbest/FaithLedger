@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Success</title>
+    <style>
+        /* Success icon animation */
+        @keyframes checkmarkAnimation {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            text-align: center;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .success-icon {
+            font-size: 3em;
+            color: #28a745;
+            margin-bottom: 20px;
+            animation: checkmarkAnimation 1.5s ease-in-out;
+        }
+
+        h1 {
+            color: #28a745;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .btn-return {
+            display: inline-block;
+            padding: 12px 20px;
+            color: #ffffff;
+            background-color: #007bff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-return:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Checkmark Icon with Animation -->
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+
+        <h1>Success!</h1>
+        <p>{{ delivery_type }} messages have been successfully delivered.</p>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn-return">Return to Admin Dashboard</a>
+    </div>
+
+    <!-- Font Awesome CDN for the checkmark icon -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+# Environment variables
+.env
+
+dominion-city-dtracker-238ba4b6c99a.json
+
+
+
+
+*.json
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+env/
+venv/
+
+# Environment variables
+.env
+
+# Database files
+*.sqlite3
+
+# IDE files
+.vscode/
+.idea/
+sendgrid.env
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt Details</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: rgb(2, 2, 48); margin: 0; padding: 0;">
+
+    <!-- Receipt Details Container -->
+    <div class="receipt-details-container" style="max-width: 800px; margin: 30px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <h2 style="text-align: center; color: #333; font-size: 28px; margin-bottom: 20px;">Receipt Details</h2>
+
+        <div class="receipt-info" style="font-size: 18px; margin-bottom: 20px; color: #555;">
+            <p><strong>Receipt ID:</strong> <span style="color: #d45a03;">{{ receipt.id }}</span></p>
+            <p><strong>Partner Name:</strong> <span style="color: #f36906;">{{ receipt.user.name }}</span></p>
+            
+            <p>
+                <strong>Donation Amount:</strong>
+                <span style="color: #e96405;">
+                    {{ currency }} {{ receipt.amount|commas }}
+                </span>
+            </p>
+            
+            <p><strong>Date:</strong> <span style="color: #e05f03;">{{ receipt.donation_date }}</span></p>
+        </div>
+
+        <!-- Action Buttons -->
+        <a href="{{ url_for('receipts_overview') }}" class="button" style="display: inline-block; padding: 10px 20px; background-color: rgb(23, 23, 163); color: white; font-size: 16px; text-decoration: none; border-radius: 5px; transition: background-color 0.3s ease;">
+            Back to Overview
+        </a>
+    </div>
+
+</body>
+</html>

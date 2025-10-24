@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dominion City Partnership Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glow {
+            text-decoration: none;
+            font-size: 1rem;
+            color: #27d0ff;
+            font-weight: bold;
+            text-shadow: 0 0 3px #27d0ff, 0 0 2px #00c6ff;
+            transition: text-shadow 0.3s ease-in-out;
+        }
+
+        .glow:hover {
+            text-shadow: 0 0 10px #163a44, 0 0 15px #00c6ff;
+        }
+
+        .small-button {
+            padding: 8px 16px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            border-radius: 10px;
+            background-color: #118eb1;
+            color: white;
+            display: inline-block;
+            margin: 0 auto;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .small-button:hover {
+            background-color: #0278b3;
+            transform: scale(1.05);
+        }
+
+        .center-text {
+            text-align: center;
+        }
+
+        .flex-card {
+            transition: all 0.3s ease;
+        }
+
+        .flex-card:hover {
+            transform: scale(1.05);
+            background-color: #00509E;
+        }
+
+        .button-content {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            align-items: center;
+        }
+
+        .button-content i {
+            margin-left: 0;
+        }
+
+        .button-content a {
+            margin-right: 0;
+            text-align: right;
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body class="bg-[#001f3f] text-white flex flex-col items-center justify-center min-h-screen text-center p-5">
+
+    <div class="bg-[#144679] p-8 rounded-xl shadow-lg max-w-2xl w-full">
+        <img src="{{ url_for('static', filename='images/dominion_city.jpeg') }}" 
+             alt="Church Logo" 
+             class="w-32 h-32 rounded-lg object-cover mx-auto mb-6">
+        <h2 id="greeting" class="text-xl text-[#00c6ff] mb-8 font-extrabold "></h2>
+
+        <h2 class="text-lg mb-6">
+            Partner Since: {{ user.partner_since if user.partner_since else 'N/A' }}
+            <br>
+            {% if user.medal %}
+            <span>
+                {% if user.medal == 'Diamond Partner' %}
+                <span class="text-[#b9f2ff] font-bold">
+                    <img src="/static/images/diamond.png" alt="Diamond Icon" class="h-14 w-14 rounded-full inline-block"> 
+                    Diamond Partner
+                </span>
+                {% elif user.medal == 'Platinum Partner' %}
+                <span class="text-[#dac08d] font-bold">
+                    <img src="/static/images/platinum.png" alt="Platinum Icon" class="h-16 w-16 rounded-full inline-block"> 
+                    Platinum Partner
+                </span>
+                {% elif user.medal == 'Gold Partner' %}
+                <span class="text-[#ffd700] font-bold">
+                    <img src="/static/images/gold.PNG" alt="Gold Icon" class="h-14 w-14 rounded-full inline-block"> 
+                    Gold Partner
+                </span>
+                {% elif user.medal == 'Blue Partner' %}
+                <span class="text-blue-500 font-bold">
+                    <img src="/static/images/blue.png" alt="Blue Icon" class="h-14 w-14 rounded-full inline-block"> 
+                    Blue Partner
+                </span>
+                {% endif %}
+            </span>
+            {% endif %}
+        </h2>
+
+        <p id="realtime-date" class="mb-6"></p>
+
+        <p class="text-xl font-bold text-[#b3ff00]">
+            Amount Pledged: {{ user.pledged_amount|commas }} {{ user.pledge_currency }}
+        </p>
+
+        <a href="{{ url_for('add_pledge', user_id=user.id) }}" class="glow mb-4 inline-block">Confirm displayed amount HERE to unlock medal.</a> 
+
+        <div class="flex flex-col gap-4 mt-6">
+            <!-- First section with pledge link -->
+            <div class="flex justify-start items-center p-3 bg-[#00274d] rounded-xl flex-card w-full max-w-[300px] mx-auto">
+                <i class="fas fa-star text-xl text-[#00c6ff] mr-3"></i>
+                <span class="text-sm">
+                    {% if not user.pledged_amount %}
+                        Not yet made a pledge? 
+                        <a href="{{ url_for('add_pledge', user_id=user.id) }}" class="text-[#00c6ff] underline text-sm">Make a Pledge</a> .
+                    {% else %}
+                        Ready to redeem your pledge? 
+                        <a href="{{ url_for('donate') }}" class="text-[#00c6ff] underline text-sm">Proceed to Payment</a> .
+                    {% endif %}
+                </span>
+            </div>
+            
+            <!-- Donations link -->
+            <div class="flex items-center p-3 bg-[#00274d] rounded-xl flex-card w-full max-w-[300px] mx-auto">
+                <div class="button-content w-full flex items-center">
+                    <i class="fas fa-hand-holding-heart text-xl text-[#28a745] mr-3"></i>
+                    <a href="{{ url_for('view_my_donations') }}" class="text-white text-sm font-semibold">Recent Donations</a>
+                </div>
+            </div>
+
+            <!-- Phone link -->
+            <div class="flex items-center p-3 bg-[#00274d] rounded-xl flex-card w-full max-w-[300px] mx-auto">
+                <div class="button-content w-full flex items-center">
+                    <i class="fas fa-phone text-xl text-[#00c6ff] mr-3"></i>
+                    <span class="text-white text-sm">Phone: {% if user.phone %}{{ user.phone[:5] }}xxxxxxx{% else %}Not provided{% endif %}</span>
+                </div>
+            </div>
+
+            <!-- Logout link -->
+            <div class="flex items-center p-3 bg-[#00274d] rounded-xl flex-card w-full max-w-[300px] mx-auto">
+                <div class="button-content w-full flex items-center">
+                    <i class="fas fa-sign-out-alt text-xl text-[#a58e0d] transition-colors duration-300 hover:text-[#1c7c32] mr-3"></i>
+                    <a href="{{ url_for('index') }}" class="text-white text-sm">Not you? Logout</a>
+                </div>
+            </div>
+
+            <!-- Profile update link -->
+            <div class="flex items-center p-3 bg-[#00274d] rounded-xl flex-card w-full max-w-[300px] mx-auto">
+                <div class="button-content w-full flex items-center">
+                    <i class="fas fa-user-edit text-xl text-[#FFD700] transition-colors duration-300 hover:text-[#C5A100] mr-3"></i>
+                    <a href="{{ url_for('edit_profile') }}" class="text-green-400 text-sm font-semibold">Update Details</a>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-6 text-sm text-gray-500">
+            <p>&copy; 2024 Dominion City. All rights reserved.</p>
+        </footer>
+
+        <script>
+            // Greeting Logic
+            const greetingElement = document.getElementById('greeting');
+            const currentHour = new Date().getHours();
+
+            if (currentHour < 12) {
+                greetingElement.textContent = `Good Morning, {{ user.name }}!`;
+            } else if (currentHour < 18) {
+                greetingElement.textContent = `Good Afternoon, {{ user.name }}!`;
+            } else {
+                greetingElement.textContent = `Good Evening, {{ user.name }}!`;
+            }
+
+            // Real-time Date
+            const realtimeDate = document.getElementById('realtime-date');
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            realtimeDate.textContent = ` ${now.toLocaleDateString('en-US', options)}`;
+        </script>
+</body>
+</html>

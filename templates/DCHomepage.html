@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DC Global Mission Partnership - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"> <!-- Poppins Font -->
+
+    <style>
+        /* Reset Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Body Styling */
+        body {
+            background-color: #001f3f; /* Dark blue background */
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Horizontally center the content */
+            justify-content: center; /* Vertically center the content */
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #00c6ff; /* Bright blue */
+            font-family: 'Poppins', sans-serif; /* Using Poppins font */
+            font-weight: 700; /* Thicker, bold font */
+            transition: color 0.3s ease-in-out, transform 0.3s ease-in-out, text-shadow 0.3s ease-in-out; /* Smooth transition for hover effect */
+        }
+
+        /* Hover effect for the title */
+        h1:hover {
+            color: gold; /* Brighter blue on hover */
+            transform: scale(1.05); /* Slight zoom effect */
+            text-shadow: 0 0 10px #00c6ff, 0 0 20px gold; /* Glow effect */
+        }
+
+        .container {
+            background-color: #13487c; /* Slightly lighter blue for the container */
+            padding: 40px 60px;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+            max-width: 700px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Updated nav-link CSS */
+        .nav-link {
+            display: block; /* Keep it block for alignment */
+            width: auto; /* Let the width be determined by the content */
+            max-width: 250px; /* Add a max-width to prevent buttons from becoming too wide */
+            padding: 8px 16px; /* Adjust padding for better button size */
+            background-color: #00274d;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1.125rem; /* Reduced font size for better balance */
+            font-weight: 600; /* Use medium weight for a balanced look */
+            text-decoration: none;
+            text-transform: uppercase; /* Make text uppercase for a professional feel */
+            letter-spacing: 1px; /* Add letter spacing for clarity */
+            transition: all 0.3s ease-in-out; /* Smooth transition for all properties */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Shadow for depth */
+            font-family: 'Poppins', sans-serif; /* Use Poppins font for a modern look */
+            margin: 0 auto; /* Center the buttons */
+        }
+
+        .nav-link:hover {
+            background-color: #00509E;
+            transform: translateY(-4px); /* Subtle hover lift effect */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6); /* More pronounced shadow on hover */
+            color: #fff;
+        }
+
+        .nav-link:active {
+            background-color: #003e61; /* Darker shade on active */
+            transform: translateY(2px); /* Simulate a press effect */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* Reduce shadow on active */
+        }
+
+        .register-link {
+            margin-top: 15px;
+            color: rgb(153, 255, 1);
+            font-size: 1rem;
+        }
+
+        .register-link a {
+            color: rgb(252, 218, 24);
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        footer a {
+            color: #00c6ff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .social-icons {
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            margin: 0 10px;
+            color: #00c6ff;
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: all 0.3s ease-in-out; /* Smooth transition */
+        }
+
+        /* Hover glow effect for social icons */
+        .social-icons a:hover {
+            color: #fff; /* White color on hover */
+            transform: scale(1.1); /* Slight zoom effect */
+            box-shadow: 0 0 15px #00c6ff, 0 0 25px gold; /* Glow effect */
+        }
+
+        /* Footer Social Icon Colors */
+        .fab.fa-youtube { color: red; }
+        .fab.fa-whatsapp { color: green; }
+        .fab.fa-facebook { color: #3b5998; }
+        .fab.fa-instagram { color: #C13584; }
+        .fab.fa-x-twitter { color: #1DA1F2; }
+
+        /* Mobile and Tablet Responsiveness */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 20px;
+            }
+
+            .container {
+                padding: 40px 30px;
+            }
+
+            .nav-links {
+                gap: 10px;
+            }
+
+            .nav-link {
+                font-size: 1.1rem;
+            }
+
+            .register-link {
+                font-size: 0.9rem;
+            }
+
+            .social-icons a {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 15px;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+
+            .nav-links {
+                gap: 8px;
+            }
+
+            .nav-link {
+                font-size: 1rem;
+            }
+
+            .register-link {
+                font-size: 0.8rem;
+            }
+
+            .social-icons a {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='images/dominion_city.jpeg') }}" alt="Church Logo" class="w-36 h-36 rounded-lg object-cover mx-auto mb-6">
+        <h1 class="text-4xl text-[#00c6ff]">DC Global Mission Partnership</h1>
+
+        <div class="nav-links">
+            <a href="{{ url_for('login') }}" class="nav-link py-4 px-6 bg-[#00274d] text-lg font-bold rounded-lg transition duration-300 ease-in-out transform hover:bg-[#00509E] hover:scale-105">&#128100; Login</a>
+
+            <a href="https://www.dominioncity.cc/" class="nav-link py-4 px-6 bg-[#00274d] text-lg font-bold rounded-lg transition duration-300 ease-in-out transform hover:bg-[#00509E] hover:scale-105" target="_blank" rel="noopener noreferrer">&#127881; Events</a>
+
+            <a href="{{ url_for('contact') }}" class="nav-link py-4 px-6 bg-[#00274d] text-lg font-bold rounded-lg transition duration-300 ease-in-out transform hover:bg-[#00509E] hover:scale-105">&#9993; Contact Us</a>
+        </div>
+
+        <p class="register-link mt-6 text-xl">
+            Don't have an account? <a href="{{ url_for('register') }}" class="text-[#fcdc18] underline">Register</a>
+        </p>
+    </div>
+
+    <footer class="mt-auto text-center text-sm text-[#aaa]">
+        <p>&copy; 2024 DC Global Mission Partnership <a href="{{ url_for('contact') }}" class="text-[#00c6ff] hover:underline">Contact Us</a></p>
+
+        <div class="social-icons mt-4">
+            <a href="https://www.youtube.com/c/DominionCity" target="_blank" aria-label="YouTube" class="hover:text-white"><i class="fab fa-youtube"></i></a>
+            <a href="https://web.facebook.com/dominioncity/" target="_blank" aria-label="Facebook" class="hover:text-white"><i class="fab fa-facebook"></i></a>
+            <a href="https://x.com/thedominioncity" target="_blank" aria-label="X" class="hover:text-white"><i class="fab fa-x-twitter"></i></a>
+            <a href="https://www.instagram.com/accounts/suspended/?next=https%3A%2F%2Fwww.instagram.com%2Fthedominioncity%3F__coig_ufac%3D1" target="_blank" aria-label="Instagram" class="hover:text-white"><i class="fab fa-instagram"></i></a>
+            <a href="https://api.whatsapp.com/send?phone=2348103526864" target="_blank" aria-label="WhatsApp" class="hover:text-white"><i class="fab fa-whatsapp"></i></a>
+            <a href="{{ url_for('contact') }}" aria-label="Email" class="hover:text-white"><i class="fas fa-envelope"></i></a>
+        </div>
+    </footer>
+</body>
+</html>
