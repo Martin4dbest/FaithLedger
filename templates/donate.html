@@ -44,7 +44,6 @@
                 </div>
             </a>
             <div class="flex flex-col items-center justify-center w-28 h-28 bg-green-600 text-white rounded-full shadow-md hover:scale-110 transform transition">
-                <i class="fas fa-money-check-alt text-4xl mb-2"></i>
                 <a href="mailto:give@dominioncityglobal.org" class="flex flex-col items-center justify-center w-28 h-28 bg-green-600 text-white rounded-full shadow-md hover:scale-110 transform transition">
                     <i class="fas fa-money-check-alt text-4xl mb-2"></i>
                     <span class="font-semibold">Zelle</span>
@@ -60,116 +59,109 @@
             </a>
         </div>
 
-
         <!-- Donation Form -->
+        <form action="{{ url_for('donate') }}" method="POST" enctype="multipart/form-data" onsubmit="return checkForm();" class="w-full max-w-md mx-auto mt-10 p-6 border rounded-lg shadow-lg">
+            
+            <!-- Checkbox to Toggle Payment Form -->
+            <label class="flex items-center space-x-2 font-semibold text-lg mb-4 text-white">
+                <input type="checkbox" id="offline_donation" name="offline_donation" onchange="toggleFields()" class="w-5 h-5 text-green-500 border-gray-300 rounded focus:ring-green-400">
+                <span>Click here to track your donation after making payment</span>
+            </label>
 
-    <!-- Donation Form -->
-    <form action="{{ url_for('donate') }}" method="POST" enctype="multipart/form-data" onsubmit="return checkForm();" class="w-full max-w-md mx-auto mt-10 p-6 border rounded-lg shadow-lg">
-        <!-- Checkbox to Toggle Payment Form -->
-        <label class="flex items-center space-x-2 font-semibold text-lg mb-4 text-white">
-            <input type="checkbox" id="offline_donation" name="offline_donation" onchange="toggleFields()" class="w-5 h-5 text-green-500 border-gray-300 rounded focus:ring-green-400">
-            <span>Click here to track your donation after making payment</span>
-        </label>
+            <!-- Payment Form Fields -->
+            <div id="amount-entry" class="hidden mt-4 p-4 border border-gray-300 rounded-lg">
 
-        <!-- Payment Form Fields -->
-        <div id="amount-entry" class="hidden mt-4 p-4 border border-gray-300 rounded-lg">
-            <!-- Amount Input -->
-            <label for="amount" class="block text-lg font-bold mb-2 text-white">Enter Amount Paid:</label>
-            <input type="number" id="amountRaw" name="amount" step="0.01" placeholder="Enter amount e.g., 1000" required 
-                class="w-full p-3 text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400 text-black" oninput="formatAmount(this)">
-            <input type="text" id="formattedAmount" placeholder="Formatted Amount (readonly)" readonly 
-                class="w-full mt-2 p-3 text-base border border-gray-300 rounded bg-gray-100 text-black" />
+                <!-- Amount Input -->
+                <label for="amount" class="block text-lg font-bold mb-2 text-white">Enter Amount Paid:</label>
+                <input type="number" id="amountRaw" name="amount" step="0.01" placeholder="Enter amount e.g., 1000" required 
+                    class="w-full p-3 text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400 text-black" oninput="formatAmount(this)">
+                <input type="text" id="formattedAmount" placeholder="Formatted Amount (readonly)" readonly 
+                    class="w-full mt-2 p-3 text-base border border-gray-300 rounded bg-gray-100 text-black" />
 
-            <!-- Payment Type -->
-            <label for="payment_type" class="block mt-4 text-lg font-bold mb-2 text-white">Payment Type:</label>
-            <select id="payment_type" name="payment_type" required 
-                    class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400 text-black">
-                <option value="" disabled selected>Select Payment Type</option>
-                <option value="part_payment">Part Payment</option>
-                <option value="full_payment">Full or Balance Payment</option>
-            </select>
+                <!-- Payment Type -->
+                <label for="payment_type" class="block mt-4 text-lg font-bold mb-2 text-white">Payment Type:</label>
+                <select id="payment_type" name="payment_type" required 
+                        class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400 text-black">
+                    <option value="" disabled selected>Select Payment Type</option>
+                    <option value="part_payment">Part Payment</option>
+                    <option value="full_payment">Full or Balance Payment</option>
+                </select>
 
-            <!-- Currency -->
-            <label for="currency" class="block mt-4 text-lg font-bold mb-2 text-white">Currency:</label>
+                <!-- Currency -->
+                <label for="currency" class="block mt-4 text-lg font-bold mb-2 text-white">Currency:</label>
+                <select id="currency" name="currency" required 
+                    class="w-full p-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-black"
+                    style="color: black; font-size: 1.3em; margin-bottom: 10px;">
+                    <option value="USD">&#36; USD - United States Dollar</option>
+                    <option value="EUR">&#8364; EUR - Euro</option>
+                    <option value="GBP">&#163; GBP - British Pound</option>
+                    <option value="NGN">&#8358; NGN - Nigerian Naira</option>
+                    <option value="AUD">&#36; AUD - Australian Dollar</option>
+                    <option value="CAD">&#36; CAD - Canadian Dollar</option>
+                    <option value="JPY">&#165; JPY - Japanese Yen</option>
+                    <option value="CNY">&#165; CNY - Chinese Yuan</option>
+                    <option value="INR">&#8377; INR - Indian Rupee</option>
+                    <option value="MXN">&#36; MXN - Mexican Peso</option>
+                    <option value="CHF">&#67;&#72;&#70; CHF - Swiss Franc</option>
+                    <option value="RUB">&#8381; RUB - Russian Ruble</option>
+                    <option value="BRL">&#82;&#36; BRL - Brazilian Real</option>
+                    <option value="ZAR">&#82; ZAR - South African Rand</option>
+                    <option value="KRW">&#8361; KRW - South Korean Won</option>
+                    <option value="HKD">&#36; HKD - Hong Kong Dollar</option>
+                    <option value="SGD">&#36; SGD - Singapore Dollar</option>
+                    <option value="SEK">&#107;&#114; SEK - Swedish Krona</option>
+                    <option value="NOK">&#107;&#114; NOK - Norwegian Krone</option>
+                    <option value="DKK">&#107;&#114; DKK - Danish Krone</option>
+                    <option value="PLN">&#122;&#322; PLN - Polish Zloty</option>
+                    <option value="TRY">&#8378; TRY - Turkish Lira</option>
+                    <option value="IDR">&#82;&#112; IDR - Indonesian Rupiah</option>
+                    <option value="MYR">&#82;&#112; MYR - Malaysian Ringgit</option>
+                    <option value="THB">&#3647; THB - Thai Baht</option>
+                    <option value="PHP">&#8369; PHP - Philippine Peso</option>
+                    <option value="AED">&#1583;&#1604; AED - UAE Dirham</option>
+                    <option value="SAR">&#65020; SAR - Saudi Riyal</option>
+                    <option value="EGP">&#1633; EGP - Egyptian Pound</option>
+                    <option value="KES">&#75;&#83; KES - Kenyan Shilling</option>
+                    <option value="TZS">&#84;&#90;&#83; TZS - Tanzanian Shilling</option>
+                    <option value="UGX">&#85;&#71;&#88; UGX - Ugandan Shilling</option>
+                </select>
 
-            <select id="currency" name="currency" required 
-                class="w-full p-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-black"
-                style="color: black; font-size: 1.3em; margin-bottom: 10px;">
-                <option value="USD">&#36; USD - United States Dollar</option>
-                <option value="EUR">&#8364; EUR - Euro</option>
-                <option value="GBP">&#163; GBP - British Pound</option>
-                <option value="NGN">&#8358; NGN - Nigerian Naira</option>
-                <option value="AUD">&#36; AUD - Australian Dollar</option>
-                <option value="CAD">&#36; CAD - Canadian Dollar</option>
-                <option value="JPY">&#165; JPY - Japanese Yen</option>
-                <option value="CNY">&#165; CNY - Chinese Yuan</option>
-                <option value="INR">&#8377; INR - Indian Rupee</option>
-                <option value="MXN">&#36; MXN - Mexican Peso</option>
-                <option value="CHF">&#67;&#72;&#70; CHF - Swiss Franc</option>
-                <option value="RUB">&#8381; RUB - Russian Ruble</option>
-                <option value="BRL">&#82;&#36; BRL - Brazilian Real</option>
-                <option value="ZAR">&#82; ZAR - South African Rand</option>
-                <option value="KRW">&#8361; KRW - South Korean Won</option>
-                <option value="HKD">&#36; HKD - Hong Kong Dollar</option>
-                <option value="SGD">&#36; SGD - Singapore Dollar</option>
-                <option value="SEK">&#107;&#114; SEK - Swedish Krona</option>
-                <option value="NOK">&#107;&#114; NOK - Norwegian Krone</option>
-                <option value="DKK">&#107;&#114; DKK - Danish Krone</option>
-                <option value="PLN">&#122;&#322; PLN - Polish Zloty</option>
-                <option value="TRY">&#8378; TRY - Turkish Lira</option>
-                <option value="IDR">&#82;&#112; IDR - Indonesian Rupiah</option>
-                <option value="MYR">&#82;&#112; MYR - Malaysian Ringgit</option>
-                <option value="THB">&#3647; THB - Thai Baht</option>
-                <option value="PHP">&#8369; PHP - Philippine Peso</option>
-                <option value="AED">&#1583;&#1604; AED - United Arab Emirates Dirham</option>
-                <option value="SAR">&#65020; SAR - Saudi Riyal</option>
-                <option value="EGP">&#1633; EGP - Egyptian Pound</option>
-                <option value="KES">&#75;&#83; KES - Kenyan Shilling</option>
-                <option value="TZS">&#84;&#90;&#83; TZS - Tanzanian Shilling</option>
-                <option value="UGX">&#85;&#71;&#88; UGX - Ugandan Shilling</option>
-                <option value="COP">&#36; COP - Colombian Peso</option>
-                <option value="PEN">&#83;&#47;&#36; PEN - Peruvian Nuevo Sol</option>
-                <option value="CLP">&#36; CLP - Chilean Peso</option>
-                <option value="ARS">&#36; ARS - Argentine Peso</option>
-                <option value="BWP">&#66;&#87;&#80; BWP - Botswanan Pula</option>
-                <option value="GHS">&#162; GHS - Ghanaian Cedi</option>
-                <option value="IQD">&#1603;&#1604; IQD - Iraqi Dinar</option>
-                <option value="JOD">&#74;&#68; JOD - Jordanian Dinar</option>
-                <option value="LKR">&#8360; LKR - Sri Lankan Rupee</option>
-                <option value="VND">&#8363; VND - Vietnamese Dong</option>
-                <option value="KHR">&#6163; KHR - Cambodian Riel</option>
-                <option value="MMK">&#77;&#77;&#75; MMK - Myanmar Kyat</option>
-            </select>
+                <!-- Payment Date -->
+                <label for="date_donated" class="block mt-4 text-lg font-bold mb-2 text-white">Payment Date:</label>
+                <input type="date" id="date_donated" name="date_donated" value="{{ donation_date | default(today) }}" required 
+                    class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400 text-black" />
 
+                <!-- Receipt Upload -->
+                <div id="receipt-upload" class="flex flex-col mt-4">
+                    <label for="receipt-file" class="block text-base font-semibold mb-2 text-white">
+                        Upload Receipt (optional):
+                    </label>
+                    <input type="file" id="receipt-file" name="receipt" accept="image/*, .pdf" 
+                        class="text-sm file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-green-500 file:text-white file:rounded cursor-pointer hover:file:bg-blue-600"
+                        onchange="previewReceipt(this)">
+                    
+                    <!-- Preview Container -->
+                    <div id="receipt-preview" class="mt-3"></div>
+                </div>
 
-            <!-- Payment Date -->
-            <label for="date_donated" class="block mt-4 text-lg font-bold mb-2 text-white">Payment Date:</label>
-            <input type="date" id="date_donated" name="date_donated" value="{{ donation_date | default(today) }}" required 
-                class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400 text-black" />
-
-            <!-- Receipt Upload -->
-            <div id="receipt-upload" class="flex items-center mt-4">
-                <label for="receipt-file" class="block text-base font-semibold mr-3 text-white">Upload Receipt (optional):</label>
-                <input type="file" id="receipt-file" name="receipt" accept="image/*, .pdf" 
-                    class="text-sm file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-green-500 file:text-white file:rounded cursor-pointer hover:file:bg-blue-600">
+                <!-- Submit Button -->
+                <button type="submit" class="w-full mt-6 py-2 px-2 bg-green-500 text-white font-bold text-lg rounded hover:bg-green-600 transition duration-300">
+                    Confirm Payment
+                </button>
             </div>
+        </form>
 
-            <!-- Submit Button -->
-            <button type="submit" class="w-full mt-6 py-2 px-2 bg-green-500 text-white font-bold text-lg rounded hover:bg-green-600 transition duration-300">
-                Confirm Payment
-            </button>
-        </div>
-    </form>
+    </div>
 
     <script>
-        // Show or hide payment form based on checkbox state
+        // Show/hide payment form
         function toggleFields() {
             const amountEntry = document.getElementById("amount-entry");
             const offlineDonation = document.getElementById("offline_donation");
             amountEntry.style.display = offlineDonation.checked ? "block" : "none";
         }
 
-        // Format amount with commas and display formatted value
+        // Format amount input
         function formatAmount(input) {
             const rawValue = input.value.replace(/,/g, '').trim();
             const formattedValue = rawValue ? Number(rawValue).toLocaleString() : '';
@@ -185,9 +177,34 @@
             }
             return true;
         }
+
+        // Preview uploaded receipt
+        function previewReceipt(input) {
+            const previewContainer = document.getElementById('receipt-preview');
+            previewContainer.innerHTML = '';
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const fileType = file.type;
+
+                if (fileType.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.className = "max-w-full h-auto rounded shadow-md";
+                    previewContainer.appendChild(img);
+                } else if (fileType === 'application/pdf') {
+                    const pdfLink = document.createElement('a');
+                    pdfLink.href = URL.createObjectURL(file);
+                    pdfLink.target = "_blank";
+                    pdfLink.className = "inline-flex items-center gap-2 text-blue-400 font-semibold hover:text-blue-600";
+                    pdfLink.innerHTML = '<i class="fas fa-file-pdf text-2xl"></i> View PDF';
+                    previewContainer.appendChild(pdfLink);
+                } else {
+                    previewContainer.innerHTML = '<span class="text-red-400 font-semibold">Cannot preview this file type.</span>';
+                }
+            }
+        }
     </script>
 
-
-    
 </body>
 </html>

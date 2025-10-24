@@ -687,13 +687,13 @@ def home2():
         user=user
     )
 
-
-
 # Your AWS S3 Configuration (replace with your actual values)
 app.config['S3_BUCKET'] = 'dcglobal-uploads'  
 app.config['S3_ACCESS_KEY'] = os.getenv('AWS_ACCESS_KEY_ID')
 app.config['S3_SECRET_KEY'] = os.getenv('AWS_SECRET_ACCESS_KEY')
 app.config['S3_REGION'] = os.getenv('AWS_DEFAULT_REGION', 'us-east-1')  
+
+
 
 # Initialize S3 client using boto3
 s3_client = boto3.client(
@@ -1007,10 +1007,10 @@ def donate():
             db.session.refresh(user)  # Ensure the latest data from the database
 
     if request.method == "POST":
-        user_id = session.get("user_id")  # Check if a user is logged in
-        payment_type = request.form.get("payment_type")  # Get the selected payment type
+        user_id = session.get("user_id")
+        payment_type = request.form.get("payment_type")
 
-        # Handle offline donation
+        # Offline donation fields
         amount = request.form.get("amount")
         currency = request.form.get("currency")
         donation_date = request.form.get("date_donated")
@@ -1031,63 +1031,66 @@ def donate():
             flash("Invalid amount format.", "danger")
             return redirect(url_for("donate"))
 
-        # Validate or set the donation date
+        # Validate donation date
         try:
             donation_date = datetime.strptime(donation_date, "%Y-%m-%d").date()
         except ValueError:
             flash("Invalid date format. Please use YYYY-MM-DD.", "danger")
             return redirect(url_for("donate"))
 
-        # Handle the uploaded file (receipt)
+        # Handle receipt upload to S3
         receipt_filename = None
         if receipt and allowed_file(receipt.filename):
             receipt_filename = secure_filename(receipt.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], receipt_filename)
-            receipt.save(filepath)
-
-            # Compress image files if it's an image format
-            if receipt_filename.lower().endswith(('png', 'jpg', 'jpeg')):
-                compress_image(filepath)
+            try:
+                s3_client.upload_fileobj(
+                    receipt,
+                    app.config['S3_BUCKET'],
+                    f"receipts/{user_id}/{receipt_filename}",
+                    ExtraArgs={'ACL': 'public-read'}  # Make public so it can be accessed
+                )
+            except Exception as e:
+                app.logger.error(f"S3 Upload Error: {e}")
+                flash("Error uploading receipt. Please try again.", "danger")
+                return redirect(url_for("donate"))
         elif receipt:
             flash("Invalid file type. Allowed types: PNG, JPG, JPEG, GIF, PDF.", "danger")
             return redirect(url_for("donate"))
 
-        # ✅ Generate a unique reference for donation
+        # Generate unique reference
         def generate_unique_reference():
-            """Generate a unique reference code and ensure it's not already in use."""
             while True:
-                reference_code = str(uuid.uuid4())[:10]  # Generate a 10-character unique reference
-                existing_donation = Donation.query.filter_by(reference=reference_code).first()
-                if not existing_donation:
-                    return reference_code  # Ensure uniqueness before returning
+                reference_code = str(uuid.uuid4())[:10]
+                existing = Donation.query.filter_by(reference=reference_code).first()
+                if not existing:
+                    return reference_code
 
         reference_code = generate_unique_reference()
 
-        # Create a new donation
+        # Create donation
         donation = Donation(
             user_id=user_id,
             amount=amount,
             currency=currency,
             donation_date=donation_date,
             payment_type=payment_type,
-            receipt_filename=receipt_filename,  # Optional field in the database for file name
-            reference=reference_code  # Ensuring reference is unique
+            receipt_filename=receipt_filename,
+            reference=reference_code
         )
 
         try:
-            # Add donation to the database
             db.session.add(donation)
             db.session.commit()
 
-            # ✅ Check if a pledge exists for the user and update pledged amount if necessary
+            # Update pledge balance if exists
             pledge = Pledge.query.filter_by(user_id=user_id).first()
             if pledge:
-                pledged_amount = pledge.amount  # Retrieve current pledged amount
-                pledge.balance = max(0, pledged_amount - amount)  # Update pledge balance dynamically
-                db.session.commit()  # Commit the update
+                pledged_amount = pledge.amount
+                pledge.balance = max(0, pledged_amount - amount)
+                db.session.commit()
 
             flash(f"Thank you for your {payment_type} donation!", "success")
-            app.logger.info(f"Donation saved: {donation.amount}, User ID: {user_id}, Type: {payment_type}, Date: {donation_date}, Reference: {reference_code}")
+            app.logger.info(f"Donation saved: {donation.amount}, User ID: {user_id}, Reference: {reference_code}")
             return redirect(url_for("donation_success"))
 
         except IntegrityError:
@@ -1098,14 +1101,13 @@ def donate():
 
         except Exception as e:
             db.session.rollback()
-            traceback.print_exc()  # Print full error traceback for debugging
+            traceback.print_exc()
             app.logger.error(f"Error saving donation: {e}")
             flash("There was an error processing your donation. Please try again.", "danger")
             return redirect(url_for("donate"))
 
-    # Retrieve pledges made by all users
+    # GET request
     pledges = db.session.query(Pledge, User).join(User, Pledge.user_id == User.id).all()
-
     return render_template("donate.html", user=user, pledges=pledges, donation_date=date.today())
 
 
