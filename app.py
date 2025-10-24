@@ -750,7 +750,6 @@ def upload_file():
                 file,
                 app.config['S3_BUCKET'],
                 filename,
-                app.config['S3_BUCKET'],
             )
 
             # Save filename to donation record
