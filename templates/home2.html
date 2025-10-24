@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        body {
+            background-color: #001f3f;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+        }
+
         .glow {
             text-decoration: none;
             font-size: 1rem;
@@ -18,7 +24,7 @@
         }
 
         .glow:hover {
-            text-shadow: 0 0 10px #163a44, 0 0 15px #00c6ff;
+            text-shadow: 0 0 10px #27d0ff, 0 0 15px #00c6ff;
         }
 
         .small-button {
@@ -37,10 +43,6 @@
         .small-button:hover {
             background-color: #0278b3;
             transform: scale(1.05);
-        }
-
-        .center-text {
-            text-align: center;
         }
 
         .flex-card {
@@ -68,14 +70,21 @@
             text-align: right;
             flex-grow: 1;
         }
+
+        /* Add subtle glow to logo */
+        .logo-glow {
+            box-shadow: 0 0 20px #27d0ff88;
+        }
     </style>
 </head>
-<body class="bg-[#001f3f] text-white flex flex-col items-center justify-center min-h-screen text-center p-5">
+<body class="flex flex-col items-center justify-center min-h-screen text-center p-5">
 
     <div class="bg-[#144679] p-8 rounded-xl shadow-lg max-w-2xl w-full">
-        <img src="{{ url_for('static', filename='images/dominion_city.jpeg') }}" 
+        <!-- Circular logo with glow -->
+        <img src="{{ url_for('static', filename='images/faith.JPG') }}" 
              alt="Church Logo" 
-             class="w-32 h-32 rounded-lg object-cover mx-auto mb-6">
+             class="w-32 h-32 rounded-full object-cover mx-auto mb-6 logo-glow">
+        
         <h2 id="greeting" class="text-xl text-[#00c6ff] mb-8 font-extrabold "></h2>
 
         <h2 class="text-lg mb-6">
@@ -117,16 +126,16 @@
         <a href="{{ url_for('add_pledge', user_id=user.id) }}" class="glow mb-4 inline-block">Confirm displayed amount HERE to unlock medal.</a> 
 
         <div class="flex flex-col gap-4 mt-6">
-            <!-- First section with pledge link -->
+            <!-- Pledge link -->
             <div class="flex justify-start items-center p-3 bg-[#00274d] rounded-xl flex-card w-full max-w-[300px] mx-auto">
                 <i class="fas fa-star text-xl text-[#00c6ff] mr-3"></i>
                 <span class="text-sm">
                     {% if not user.pledged_amount %}
                         Not yet made a pledge? 
-                        <a href="{{ url_for('add_pledge', user_id=user.id) }}" class="text-[#00c6ff] underline text-sm">Make a Pledge</a> .
+                        <a href="{{ url_for('add_pledge', user_id=user.id) }}" class="text-[#00c6ff] underline text-sm">Make a Pledge</a>.
                     {% else %}
                         Ready to redeem your pledge? 
-                        <a href="{{ url_for('donate') }}" class="text-[#00c6ff] underline text-sm">Proceed to Payment</a> .
+                        <a href="{{ url_for('donate') }}" class="text-[#00c6ff] underline text-sm">Proceed to Payment</a>.
                     {% endif %}
                 </span>
             </div>
@@ -165,7 +174,7 @@
         </div>
 
         <footer class="mt-6 text-sm text-gray-500">
-            <p>&copy; 2024 Dominion City. All rights reserved.</p>
+            <p>&copy; 2024 FaithLedger. All rights reserved. Developer: Martinez 09045531092</p>
         </footer>
 
         <script>
