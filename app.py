@@ -749,6 +749,7 @@ def upload_file():
     return 'Invalid file type'
 
 
+
 # Optional: Compress image function (if needed)
 def compress_image(filepath):
     with Image.open(filepath) as img:
@@ -789,6 +790,10 @@ def delete_receipt_by_filename(filename):
         db.session.commit()  # Commit the changes to the database
 
     return redirect(url_for('receipts_overview'))  # Redirect to the receipts overview page
+
+
+print(os.getenv("UPLOAD_FOLDER"))
+
 
 
 # Function to generate a URL for a file stored in S3
