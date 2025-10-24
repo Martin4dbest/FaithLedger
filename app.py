@@ -684,18 +684,16 @@ def home2():
     # Render the template with the user data
     return render_template(
         'home2.html',
-        user=user
-    )
+ user=user
+)
 
-# Your AWS S3 Configuration (replace with your actual values)
-app.config['S3_BUCKET'] = 'dcglobal-uploads'  
+# AWS S3 Configuration
+app.config['S3_BUCKET'] = 'dcglobal-uploads'
 app.config['S3_ACCESS_KEY'] = os.getenv('AWS_ACCESS_KEY_ID')
 app.config['S3_SECRET_KEY'] = os.getenv('AWS_SECRET_ACCESS_KEY')
-app.config['S3_REGION'] = os.getenv('AWS_DEFAULT_REGION', 'us-east-1')  
+app.config['S3_REGION'] = os.getenv('AWS_DEFAULT_REGION', 'us-east-1')
 
-
-
-# Initialize S3 client using boto3
+# Initialize S3 client once
 s3_client = boto3.client(
     's3',
     aws_access_key_id=app.config['S3_ACCESS_KEY'],
@@ -703,133 +701,118 @@ s3_client = boto3.client(
     region_name=app.config['S3_REGION']
 )
 
-# Your allowed file extensions
+# Allowed file extensions
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf'}
 
-# Initialize mail instance (configure with actual settings)
+# Initialize mail
 mail = Mail(app)
 
-# Check if the file is allowed (extension check)
+# Check allowed file type
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Route for handling file upload
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    if 'file' not in request.files:
-        return 'No file part'
-    
-    file = request.files['file']
-    
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-
-        try:
-            # Upload the file to S3
-            s3_client.upload_fileobj(
-                file,
-                app.config['S3_BUCKET'],
-                filename,
-                ExtraArgs={'ACL': 'private'}  # Private by default, adjust as needed
-            )
-
-            # Assuming you have the donation_id passed in the form or some way to fetch it
-            donation_id = request.form.get('donation_id')  # Ensure you get donation_id from form or context
-            donation = Donation.query.get(donation_id)
-            
-            if donation:
-                # Save the file name to the database for the corresponding donation
-                donation.receipt_filename = filename
-                db.session.commit()
-
-            return redirect(url_for('receipts_overview'))  # Redirect to the receipt overview after upload
-        except Exception as e:
-            return f"Error uploading file to S3: {e}"
-
-    return 'Invalid file type'
-
-
-
-# Optional: Compress image function (if needed)
+# Compress image if needed
 def compress_image(filepath):
     with Image.open(filepath) as img:
         img.save(filepath, optimize=True, quality=85)
 
+# Generate pre-signed S3 URL (for private bucket)
+def get_s3_file_url(filename, expiration=3600):
+    try:
+        url = s3_client.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': app.config['S3_BUCKET'], 'Key': filename},
+            ExpiresIn=expiration
+        )
+        return url
+    except Exception as e:
+        app.logger.error(f"Error generating pre-signed URL: {e}")
+        return None
 
-# AWS S3 Client
-s3_client = boto3.client(
-    's3',
-    aws_access_key_id=app.config['S3_ACCESS_KEY'],
-    aws_secret_access_key=app.config['S3_SECRET_KEY'],
-    region_name=app.config['S3_REGION']
-)
+# Upload route
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        flash("No file selected for upload", "danger")
+        return redirect(request.referrer)
 
+    file = request.files['file']
+    if file.filename == '':
+        flash("No selected file", "danger")
+        return redirect(request.referrer)
+
+    if file and allowed_file(file.filename):
+        # Generate unique filename
+        filename = f"{uuid.uuid4().hex}_{secure_filename(file.filename)}"
+        try:
+            # Upload to S3
+            s3_client.upload_fileobj(
+                file,
+                app.config['S3_BUCKET'],
+                filename,
+                ExtraArgs={'ACL': 'private'}
+            )
+
+            # Save filename to donation record
+            donation_id = request.form.get('donation_id')
+            donation = Donation.query.get(donation_id)
+            if donation:
+                donation.receipt_filename = filename
+                db.session.commit()
+
+            flash("File uploaded successfully!", "success")
+            return redirect(url_for('receipts_overview'))
+
+        except Exception as e:
+            app.logger.error(f"S3 upload failed: {e}")
+            flash("Failed to upload file. Please try again.", "danger")
+            return redirect(request.referrer)
+
+    flash("Invalid file type", "danger")
+    return redirect(request.referrer)
+
+# Delete file from S3
 def delete_file_from_s3(filename):
     try:
-        s3_client = boto3.client('s3')
-        bucket_name = 'dcglobal-uploads'  # Replace with your bucket name
-        s3_client.delete_object(Bucket=bucket_name, Key=filename)
-        print(f"File {filename} deleted successfully.")
+        s3_client.delete_object(Bucket=app.config['S3_BUCKET'], Key=filename)
+        app.logger.info(f"File {filename} deleted from S3.")
     except NoCredentialsError:
-        print("Credentials not available.")
-        # You can handle this error in a way that suits your application, like showing a message to the user
+        app.logger.error("AWS credentials not found.")
     except Exception as e:
-        print(f"Error deleting file {filename}: {e}")
-        # Handle other exceptions (e.g., file not found, permission issues)
+        app.logger.error(f"Error deleting file {filename} from S3: {e}")
 
-
+# Delete receipt route
 @app.route('/delete_receipt/<filename>', methods=['POST'])
 def delete_receipt_by_filename(filename):
-    # First, delete the file from S3
     delete_file_from_s3(filename)
 
-    # Now, update the database to remove the reference to the receipt
     donation = Donation.query.filter_by(receipt_filename=filename).first()
     if donation:
-        donation.receipt_filename = None  # Clear the filename field in the database
-        db.session.commit()  # Commit the changes to the database
+        donation.receipt_filename = None
+        db.session.commit()
 
-    return redirect(url_for('receipts_overview'))  # Redirect to the receipts overview page
+    flash("Receipt deleted successfully.", "success")
+    return redirect(url_for('receipts_overview'))
 
-
-print(os.getenv("UPLOAD_FOLDER"))
-
-
-
-# Function to generate a URL for a file stored in S3
-def get_s3_file_url(filename):
-    return f"https://{app.config['S3_BUCKET']}.s3.{app.config['S3_REGION']}.amazonaws.com/{filename}"
-
-
+# Receipts overview
 @app.route('/receipts-overview')
 def receipts_overview():
-    # Your code here
     return render_template('admin_uploaded_receipts.html')
 
-
-
+# View receipt
 @app.route('/view_receipt/<filename>')
 def view_receipt(filename):
-    # Fetch the donation by the receipt filename
     donation = Donation.query.filter_by(receipt_filename=filename).first_or_404()
-
-    # Ensure the `currency` is part of the donation object
-    currency = donation.currency if hasattr(donation, 'currency') else 'USD'  # Default to USD if currency is missing
-    
-    # Get the S3 URL for the receipt file
+    currency = getattr(donation, 'currency', 'USD')
     file_url = get_s3_file_url(donation.receipt_filename)
-
-    # Render the receipt details page
     return render_template('view_receipt.html', donation=donation, currency=currency, file_url=file_url)
 
-
-
+# Admin uploaded receipts
 @app.route("/admin_uploaded_receipts", methods=["GET", "POST"])
 @admin_required
 def admin_uploaded_receipts():
     search_term = request.args.get("search_term", "").lower()
 
-    # Query donations with receipts and join user data
     receipts = (
         db.session.query(
             Donation.receipt_filename,
@@ -842,7 +825,6 @@ def admin_uploaded_receipts():
         .filter(Donation.receipt_filename.isnot(None))
     )
 
-    # Apply the filter if a search term is provided
     if search_term:
         receipts = receipts.filter(
             db.or_(
@@ -853,10 +835,8 @@ def admin_uploaded_receipts():
             )
         )
 
-    # Execute the query
     receipts = receipts.all()
 
-    # Format data for the template with S3 file URLs
     uploaded_receipts = [
         {
             "filename": receipt.receipt_filename,
@@ -872,6 +852,22 @@ def admin_uploaded_receipts():
     return render_template('admin_uploaded_receipts.html', files=uploaded_receipts, search_term=search_term)
 
 
+
+@app.route('/s3-test')
+def s3_test():
+    import boto3
+    import os
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+        region_name=os.getenv('AWS_DEFAULT_REGION')
+    )
+    try:
+        buckets = [b['Name'] for b in s3.list_buckets()['Buckets']]
+        return f"S3 Buckets: {buckets}"
+    except Exception as e:
+        return f"Error: {e}"
 
 
 """
