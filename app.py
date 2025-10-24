@@ -781,6 +781,21 @@ def delete_file_from_s3(filename):
     except Exception as e:
         app.logger.error(f"Error deleting file {filename} from S3: {e}")
 
+
+
+def get_s3_presigned_url(filename, expiration=3600):
+    try:
+        url = s3_client.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': app.config['S3_BUCKET'], 'Key': filename},
+            ExpiresIn=expiration
+        )
+        return url
+    except Exception as e:
+        app.logger.error(f"Error generating presigned URL: {e}")
+        return None
+
+
 # Delete receipt route
 @app.route('/delete_receipt/<filename>', methods=['POST'])
 def delete_receipt_by_filename(filename):
@@ -990,17 +1005,14 @@ def view_my_donations():
 
     return render_template('view_my_donations.html', donation_details=donation_details
 """
-
-
-
 @app.route("/donate", methods=["GET", "POST"])
 def donate():
     user = None
     if "user_id" in session:
-        user = get_current_user()  # Retrieve the current logged-in user if available
+        user = get_current_user()  # Retrieve current logged-in user
         app.logger.debug(f"User object: {user}")
         if user:
-            db.session.refresh(user)  # Ensure the latest data from the database
+            db.session.refresh(user)  # Ensure latest data from DB
 
     if request.method == "POST":
         user_id = session.get("user_id")
@@ -1038,12 +1050,12 @@ def donate():
         receipt_filename = None
         if receipt and allowed_file(receipt.filename):
             receipt_filename = secure_filename(receipt.filename)
+            s3_key = f"receipts/{user_id}/{receipt_filename}"
             try:
                 s3_client.upload_fileobj(
                     receipt,
                     app.config['S3_BUCKET'],
-                    f"receipts/{user_id}/{receipt_filename}",
-                    ExtraArgs={'ACL': 'public-read'}  # Make public so it can be accessed
+                    s3_key  # ✅ Removed ACL
                 )
             except Exception as e:
                 app.logger.error(f"S3 Upload Error: {e}")
@@ -1106,6 +1118,19 @@ def donate():
     pledges = db.session.query(Pledge, User).join(User, Pledge.user_id == User.id).all()
     return render_template("donate.html", user=user, pledges=pledges, donation_date=date.today())
 
+# Helper to generate a pre-signed URL for private S3 files
+def get_s3_presigned_url(filename, expiration=3600):
+    s3_key = f"receipts/{session.get('user_id')}/{filename}"
+    try:
+        url = s3_client.generate_presigned_url(
+            "get_object",
+            Params={"Bucket": app.config['S3_BUCKET'], "Key": s3_key},
+            ExpiresIn=expiration
+        )
+        return url
+    except Exception as e:
+        app.logger.error(f"Error generating presigned URL: {e}")
+        return None
 
 
 
